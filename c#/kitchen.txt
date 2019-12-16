@@ -1,0 +1,125 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Kitchen
+{
+    abstract class Food
+    {
+        protected int stage = 1;
+        public int Stage
+        {
+            get { return this.stage; }
+        }
+        public abstract void AddStage(); //추상메소드
+    }
+
+    class Bread : Food
+    {
+        public override void AddStage()
+        {
+            if(this.stage < 50)
+                this.stage++;
+        }
+    }
+
+    class Meat : Food
+    {
+        public override void AddStage()
+        {
+            if (this.stage < 100)
+                this.stage++;
+        }
+    }
+
+    interface ICookable
+    {
+        void Roast(int time);
+    }
+
+    class Toaster : ICookable
+    {
+        private Bread[] breads; //배열 선언만, 배열지정X
+        public Toaster(int count) //생성자
+        {
+            breads = new Bread[count]; //배열 지정(크기)
+        }
+
+        public void InsertBread(Bread bread)
+        {
+            for (int i=0; i<breads.Length; i++)
+            {
+                if (breads[i] == null)
+                {
+                    breads[i] = bread;
+                    break;
+                }
+            }
+        }
+
+        public Bread GetBread(int slot)
+        {
+            Bread bread = null;
+            if(slot < breads.Length)
+            {
+                bread = breads[slot];
+                breads[slot] = null;
+            }
+            return bread;
+        }
+
+        public void Roast(int time)
+        {
+            if(time <= 10)
+            {
+                for (int i = 0; i < time; i++)
+                    for (int j = 0; j < breads.Length; j++)
+                        if(breads[j] != null)
+                            breads[j].AddStage();
+            }
+        }
+    }
+
+    class Grill : ICookable
+    {
+        public void Roast(int time)
+        {
+
+        }
+    }
+}
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Kitchen;
+
+namespace Bakery
+{
+    class BakeryTest
+    {
+        static void Main(string[] args)
+        {
+            Toaster t = new Toaster(4);
+            t.InsertBread(new Bread());
+            t.InsertBread(new Bread());
+            t.InsertBread(new Bread());
+
+            t.Roast(3);
+            Bread b1 = t.GetBread(0);
+
+            t.Roast(5);
+            Bread b2 = t.GetBread(1);
+            Bread b3 = t.GetBread(2);
+
+            Console.WriteLine(b1.Stage);
+            Console.WriteLine(b2.Stage);
+            Console.WriteLine(b3.Stage);
+        }
+    }
+}

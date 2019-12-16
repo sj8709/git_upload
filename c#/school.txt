@@ -1,0 +1,204 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MySchool
+{
+    abstract class People
+    {
+        public string Name{
+            get { return name; }
+            set { name = value; }
+        }
+        public int Number{
+            get { return number; }            
+        }
+        public string Phone
+        {
+            get { return phone; }
+            set { phone = value; }
+        }
+
+        public People(string name, int number)
+        {
+            this.name = name;
+            this.number = number;
+
+        }        
+        protected string name;
+        protected int number;
+        protected string phone;
+    }
+
+
+    class Student : People
+    {
+        public Student(string name, int number): base(name, number)
+        {
+
+        }
+    }
+    class Teacher : People
+    {
+        public Teacher(string name, int number): base(name, number)
+        {
+
+        }
+    }
+    class StudentScore
+    {
+        public Student Stu{ get { return stu; }}
+        public int Score
+        {
+            get { return score; }
+            set { score = value; } //여기 점수 처리하는 것 추가로 할 것
+        }
+        public StudentScore(Student s)
+        {
+            this.stu = s;
+        }
+        private Student stu;
+        private int score;
+    }
+
+    class SubjectTypeOne
+    {
+        private string name;
+        private Teacher lecturer;
+        private Student[] students;
+        private int[] scores;
+        private int regNumber;
+
+        public SubjectTypeOne(string name, int num)
+        {
+            this.name = name;
+            students = new Student[num];
+            scores = new int[num];
+            regNumber = 0;
+        }
+        public String Name { get { return name; } }
+        public Student[] Students { get { return students; } }
+        public Teacher Lecturer { get { return lecturer; } set { lecturer = value; } }
+        //public int RegNumber { get { return regNumber; } }
+
+        public void RegCourse(Student s) { }
+        public void InputScore(Student s, int score) { }
+        public int GetScore(Student s) { return 0; }
+        public int GetAverage() { return 0; }
+        public int GetMaxScore() { return 0; }
+        public int GetMinScore() { return 0; }
+        public int GetRank(Student s) { return 0; }
+        public void ViewAllScore() { }
+        public int GetRegMember() { return 0; }
+    }
+    class SubjectTypeTwo
+    {
+        private string name;
+        private Teacher lecturer;
+        private List<StudentScore> studentList;
+        private int maxNumber;
+
+        public SubjectTypeTwo(string name, int num)
+        {
+            this.name = name;
+            studentList = new List<StudentScore>();
+            maxNumber = num;
+        }
+        public String Name { get { return name; } }
+        public Student[] Students { 
+            get {
+                Student[] students = new Student[studentList.Count];
+                for (int i = 0; i < studentList.Count; i++)
+                    students[i] = studentList[i].Stu;
+                return students;
+                } 
+        }
+        public Teacher Lecturer { get { return lecturer; } set { lecturer = value; } }
+
+        public void RegCourse(Student s) {
+            if (maxNumber > studentList.Count)
+            {
+                studentList.Add(new StudentScore(s));
+                Console.WriteLine("{0}학생: 수강신청 완료", s.Name);
+            }
+            else
+            {
+                Console.WriteLine("{0}학생: 수강인원 초과로 수강신청 불가", s.Name);
+            }
+        }
+        public void InputScore(Student s, int score) {
+            for(int i=0; i<studentList.Count ;i++)
+            {
+                if (studentList[i].Stu == s)
+                {
+                    studentList[i].Score = score;
+                    return;
+                }
+            }
+            Console.WriteLine("{0}학생: 찾을 수 없음", s.Name);
+        }
+        public int GetScore(Student s) { return 0; }
+        public int GetAverage() { return 0; }
+        public int GetMaxScore() { return 0; }
+        public int GetMinScore() { return 0; }
+        public int GetRank(Student s) { return 0; }
+        public void ViewAllScore() {
+            for (int i = 0; i < studentList.Count; i++)
+            {
+                Console.WriteLine("{0}학생 : {1}점", studentList[i].Stu.Name , studentList[i].Score);
+            }
+       }
+        public int GetRegMember() { return 0; }     
+    }
+
+    
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            List<Teacher> tList = new List<Teacher>();
+            tList.Add(new Teacher("김인하", 1));
+            tList.Add(new Teacher("이공전", 2));
+
+
+            List<Student> sList = new List<Student>();
+            sList.Add(new Student("김학원", 1));
+            sList.Add(new Student("이학원", 2));
+            sList.Add(new Student("박학원", 3));
+            sList.Add(new Student("최학원", 4));
+            sList.Add(new Student("윤학원", 5));
+            sList.Add(new Student("장학원", 6));
+            sList.Add(new Student("여학원", 7));
+
+            List<SubjectTypeTwo> subList= new List<SubjectTypeTwo>();
+            subList.Add(new SubjectTypeTwo("C#", 20));
+            subList[0].Lecturer = tList[0];
+            subList[0].RegCourse(sList[0]);
+            subList[0].RegCourse(sList[2]);
+            subList[0].RegCourse(sList[4]);
+            subList[0].RegCourse(sList[6]);
+
+            subList[0].InputScore(sList[0], 100);
+            subList[0].InputScore(sList[2], 90);
+            subList[0].InputScore(sList[4], 80);
+            subList[0].InputScore(sList[6], 70);
+                       
+
+
+            Console.WriteLine(subList[0].GetScore(sList[6]));
+            Console.WriteLine(subList[0].GetAverage());
+            Console.WriteLine(subList[0].GetMaxScore());
+            Console.WriteLine(subList[0].GetMinScore());
+            Console.WriteLine(subList[0].GetRank(sList[6]));
+            Console.WriteLine(subList[0].GetRegMember());
+
+
+            subList[0].ViewAllScore();
+            
+        }
+    }
+}
